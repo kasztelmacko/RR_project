@@ -1,3 +1,13 @@
+# How to contribute:
+- the main training file follows the https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py rewriten in R + reticulate
+- to load the proper R libraries and python packages just run source("project_setup.R") which is on top of the model_train.R file
+- Current packages in use:
+   - R6: most python like OOP in R
+   - reticulate: packages that allows running python in R
+   - torch
+   - numpy
+   - tiktoken: OpenAI word tokenizer used in GPT2 training process
+
 # RR_project
 This project aims to reimplement the GPT-2 model 124M parameters model in R and recreates the zero-shot evaluation of GPT-2 from "Language Models are Unsupervised Multitask Learners" (Radford et al., 2019) on three key benchmarks:
    - Language Modeling: Perplexity scores on Penn Treebank (PTB) and WikiText-2 to measure generative performance.
