@@ -49,7 +49,7 @@ DataLoaderLite <- R6Class(
       self$current_position <- self$Batch * self$Token * self$process_rank + 1
     },
     next_batch = function() {
-      Batch <- self$Batcg
+      Batch <- self$Batch
       Token <- self$Token
       start_pos <- self$current_position
       end_pos <- start_pos + Batch * Token
