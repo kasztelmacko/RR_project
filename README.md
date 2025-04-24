@@ -20,3 +20,4 @@ This project aims to reimplement the GPT-2 model 124M parameters model in R and 
 - Penn Treebank dataset: https://www.kaggle.com/datasets/aliakay8/penn-treebank-dataset
 - WikiText-2 dataset: https://huggingface.co/datasets/mindchain/wikitext2
 - CoQA dataset: https://huggingface.co/datasets/stanfordnlp/coqa
+- Training Data smaller version of webtext https://www.kaggle.com/datasets/isamuisozaki/roughly-one-quarter-of-openwebtext
