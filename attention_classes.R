@@ -13,6 +13,38 @@ GPTConfig <- list(
 
 library(torch)
 
+scaled_dot_product_attention <- function(query, key, value,
+                                         is_causal = FALSE, dropout_p = 0.0) {
+  # Partial implementation of the python version
+  # https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html
+
+  L <- query$size(-2)
+  S <- key$size(-2)
+
+  scale_factor <- 1 / sqrt(query$size(-1))
+
+  attn_bias <- torch_zeros(c(L, S), dtype = query$dtype, device = query$device)
+
+  if (is_causal) {
+    temp_mask <- torch_ones(c(L, S), dtype = torch_bool(), device = query$device)$tril(diagonal = 0)
+    attn_bias <- attn_bias$masked_fill(temp_mask$logical_not(), -Inf)
+    attn_bias <- attn_bias$to(dtype = query$dtype)
+  }
+
+  attn_weight <- torch_matmul(query, key$transpose(-2, -1)) * scale_factor
+  attn_weight <- attn_weight + attn_bias
+  attn_weight <- nnf_softmax(attn_weight, dim = -1)
+
+  if (dropout_p > 0.0) {
+    attn_weight <- nnf_dropout(attn_weight, p = dropout_p, training = TRUE)
+  }
+
+  output <- torch_matmul(attn_weight, value)
+
+  return(output)
+}
+
+
 CausalSelfAttention <- nn_module(
   "CausalSelfAttention",
   initialize = function(config) {
@@ -53,7 +85,6 @@ CausalSelfAttention <- nn_module(
     q <- q$view(c(B, T, self$n_head, head_size))$transpose(2,3)
     v <- v$view(c(B, T, self$n_head, head_size))$transpose(2,3)
     
-    # TODO: implement scaled_dot_product_attention
     y <- scaled_dot_product_attention(q, k, v, is_causal = TRUE)
     y <- y$transpose(2, 3)$contiguous()$view(c(B, T, C))
     y <- self$c_proj(y)
