@@ -1,25 +1,36 @@
 {
   "name": "gpt2-r",
   "dockerFile": "Dockerfile",
+  "build": {
+    "args": {
+      "GIT_USER_NAME": "${localEnv:GIT_USER_NAME}",
+      "GIT_USER_EMAIL": "${localEnv:GIT_USER_EMAIL}",
+      "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+    }
+  },
   "customizations": {
-      "vscode": {
-          "extensions": [
-              "REditorSupport.r",
-              "ms-python.python",
-              "Ikuyadeu.r"
-          ],
-          "settings": {
-              "r.rpath.linux": "/usr/local/bin/R",
-              "r.rterm.linux": "/usr/local/bin/R",
-              "r.lsp.path": "/usr/local/bin/R",
-              "r.bracketedPaste": true,
-              "r.sessionWatcher": true,
-              "python.pythonPath": "/usr/bin/python3.9",
-              "python.linting.enabled": true,
-              "python.linting.pylintEnabled": true
-          }
+    "vscode": {
+      "extensions": [
+        "REditorSupport.r",
+        "ms-python.python",
+        "Ikuyadeu.r",
+        "GitHub.vscode-pull-request-github"
+      ],
+      "settings": {
+        "r.rpath.linux": "/usr/local/bin/R",
+        "r.rterm.linux": "/usr/local/bin/R",
+        "r.lsp.path": "/usr/local/bin/R",
+        "r.bracketedPaste": true,
+        "r.sessionWatcher": true,
+        "python.pythonPath": "/usr/bin/python3.9",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "git.enabled": true,
+        "git.autofetch": true
       }
+    }
   },
   "remoteUser": "root",
-  "workspaceFolder": "/workspaces"
+  "workspaceFolder": "/workspaces/RR_project",
+  "postCreateCommand": "ln -sf /workspaces/.gitconfig ~/.gitconfig"
 }

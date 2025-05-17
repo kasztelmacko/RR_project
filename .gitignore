@@ -47,3 +47,10 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Ignore environment and git config files, but keep example versions
+.env
+!.example-env
+
+.gitconfig
+!.gitconfig-example
