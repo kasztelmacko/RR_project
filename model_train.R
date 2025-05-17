@@ -67,3 +67,137 @@ DataLoaderLite <- R6Class(
     }
   )
 )
+# -----------------------------------------------------------------------------
+#model config - smaller than in Python code, lighter for experimenting purposes
+#can be updated during testing
+##########################################
+#the python config:                      #
+#n_layer	12                             #
+#n_head	12                               #
+#n_embd	768.                             #
+#block_size	1024                         #
+##########################################
+config <- list(
+  vocab_size = 50257,
+  block_size = 128,
+  n_layer = 4,
+  n_head = 4,
+  n_embd = 128,
+  batch_size = 16,
+  max_iters = 500,
+  eval_interval = 50,
+  learning_rate = 3e-4,
+  device = if (cuda_is_available()) torch_device("cuda") else torch_device("cpu"),
+  patience = 5
+)
+
+#defining GPT model
+GPTModel <- nn_module(
+  "GPTModel",
+  initialize = function(vocab_size, n_embd, n_layer, n_head, block_size) {
+    self$embedding <- nn_embedding(vocab_size, n_embd)
+    self$transformer <- nn_transformer_encoder(
+      encoder_layer = nn_transformer_encoder_layer(d_model = n_embd, nhead = n_head),
+      num_layers = n_layer
+    )
+    self$linear <- nn_linear(n_embd, vocab_size)
+    self$block_size <- block_size
+  },
+  forward = function(x) {
+    x <- self$embedding(x)
+    x <- x$permute(c(2, 1, 3))
+    x <- self$transformer(x)
+    x <- x$permute(c(2, 1, 3))
+    x <- self$linear(x)
+    return(x)
+  }
+)
+
+#model instantiation
+model <- GPTModel(
+  vocab_size = config$vocab_size,
+  n_embd = config$n_embd,
+  n_layer = config$n_layer,
+  n_head = config$n_head,
+  block_size = config$block_size
+)$to(device = config$device)
+
+optimizer <- optim_adam(model$parameters, lr = config$learning_rate)
+criterion <- nn_cross_entropy_loss()
+
+train_loader <- DataLoaderLite$new(
+  Batch = config$batch_size,
+  Token = config$block_size,
+  process_rank = 0,
+  num_processes = 1,
+  split = "train",
+  master_process = TRUE
+)
+
+val_loader <- DataLoaderLite$new(
+  Batch = config$batch_size,
+  Token = config$block_size,
+  process_rank = 0,
+  num_processes = 1,
+  split = "val",
+  master_process = TRUE
+)
+
+evaluate <- function(loader) {
+  model$eval()
+  total_loss <- 0
+  for (i in 1:10) {
+    batch <- loader$next_batch()
+    x <- batch$x$to(device = config$device)
+    y <- batch$y$to(device = config$device)
+    with_no_grad({
+      logits <- model(x)
+      loss <- criterion(logits$view(c(-1, config$vocab_size)), y$view(-1))
+    })
+    total_loss <- total_loss + loss$item()
+  }
+  model$train()
+  return(total_loss / 10)
+}
+
+#training loop
+best_val_loss <- Inf
+patience_counter <- 0
+
+for (iter in 1:config$max_iters) {
+  batch <- train_loader$next_batch()
+  x <- batch$x$to(device = config$device)
+  y <- batch$y$to(device = config$device)
+  
+  optimizer$zero_grad()
+  logits <- model(x)
+  loss <- criterion(logits$view(c(-1, config$vocab_size)), y$view(-1))
+  loss$backward()
+  optimizer$step()
+  
+  if (iter %% config$eval_interval == 0) {
+    val_loss <- evaluate(val_loader)
+    cat(sprintf("Iter %d | Train Loss: %.4f | Val Loss: %.4f\n", iter, loss$item(), val_loss))
+    
+    if (val_loss < best_val_loss) {
+      best_val_loss <- val_loss
+      dir.create("checkpoints", showWarnings = FALSE)
+      torch_save(model$state_dict(), "checkpoints/best_model.pt")
+      patience_counter <- 0
+      cat("Model improved, checkpoint saved!\n")
+    } else {
+      patience_counter <- patience_counter + 1
+      if (patience_counter >= config$patience) {
+        cat("!!!Early stopping due to no improvement!!!\n")
+        break
+      }
+    }
+  }
+}
+######################################################################
+#steps to do/think about:                                            #
+#hyperparameter tuning (already listed in the code)                  #
+#shuffling the data for training                                     #
+#parallelization                                                     #
+#model saving with torch_save to avoid losing the best model         #
+######################################################################
