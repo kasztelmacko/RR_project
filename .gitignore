@@ -54,3 +54,6 @@ rsconnect/
 
 .gitconfig
 !.gitconfig-example
+
+weights/*
+!weights/

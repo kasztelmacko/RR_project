@@ -30,3 +30,6 @@ We plan to understand the GPT2 architecture by following Andrej Karpathy video a
 4. Torch for net modelling
 5. AWS Lambda for GPU on demand
 6. additional libraries
+
+## The trained model weights can be downloaded at:
+https://drive.google.com/file/d/1jnYn3kaVyoLcGEmDBCOFNPAslrs2tRo4/view and placed in weights folder

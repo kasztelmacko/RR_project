@@ -17,22 +17,32 @@ tryCatch({
   }
 
   message("\n=== STEP 2: Configuring Python environment ===")
-  use_python(python_bin, required = TRUE)
+  python_env <- "gpt2-env"
 
-  if (!virtualenv_exists("gpt2-env")) {
-    message("Creating virtual environment: gpt2-env")
-    virtualenv_create("gpt2-env", python = python_bin)
+  if (!virtualenv_exists(python_env)) {
+    message("Creating virtual environment: ", python_env)
+    virtualenv_create(python_env, python = python_bin)
   }
 
-  use_virtualenv("gpt2-env", required = TRUE)
+  # Check if the current Python already matches the virtualenv's Python
+  configured_python <- tryCatch(py_config()$python, error = function(e) NULL)
+  expected_python <- virtualenv_python(python_env)
+
+  if (!identical(normalizePath(configured_python, mustWork = FALSE),
+                normalizePath(expected_python, mustWork = FALSE))) {
+    suppressWarnings(use_virtualenv(python_env, required = TRUE))
+    message("Activated virtualenv: ", python_env)
+  } else {
+    message("Virtualenv already active: ", python_env)
+  }
 
   message("\n=== STEP 3: Installing Python packages ===")
   py_install(c("tiktoken", "numpy", "torch"), envname = "gpt2-env", pip = TRUE)
 
   message("\n=== STEP 4: Verifying torch setup ===")
   if (!torch_is_installed()) {
-    message("Installing Torch (CPU version)...")
-    install_torch(type = "cpu")
+    message("Installing Torch (auto-detecting GPU support)...")
+    install_torch()
   }
 
   message("\n=== STEP 5: Final verification ===")
