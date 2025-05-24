@@ -1,36 +1,65 @@
 {
-  "name": "gpt2-r",
-  "dockerFile": "Dockerfile",
-  "build": {
-    "args": {
-      "GIT_USER_NAME": "${localEnv:GIT_USER_NAME}",
-      "GIT_USER_EMAIL": "${localEnv:GIT_USER_EMAIL}",
-      "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
-    }
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "REditorSupport.r",
-        "ms-python.python",
-        "Ikuyadeu.r",
-        "GitHub.vscode-pull-request-github"
-      ],
-      "settings": {
-        "r.rpath.linux": "/usr/local/bin/R",
-        "r.rterm.linux": "/usr/local/bin/R",
-        "r.lsp.path": "/usr/local/bin/R",
-        "r.bracketedPaste": true,
-        "r.sessionWatcher": true,
-        "python.pythonPath": "/usr/bin/python3.9",
-        "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
-        "git.enabled": true,
-        "git.autofetch": true
-      }
-    }
-  },
-  "remoteUser": "root",
-  "workspaceFolder": "/workspaces/RR_project",
-  "postCreateCommand": "ln -sf /workspaces/.gitconfig ~/.gitconfig"
+    "name": "gpt2-r",
+    "dockerFile": "Dockerfile",
+    "build": {
+        "args": {
+            "GIT_USER_NAME": "${localEnv:GIT_USER_NAME}",
+            "GIT_USER_EMAIL": "${localEnv:GIT_USER_EMAIL}",
+        }
+    },
+    "runArgs": [
+        "--gpus", "all",
+        "--shm-size=2g"
+    ],
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "REditorSupport.r",
+                "REditorSupport.r-lsp",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter",
+                "GitHub.vscode-pull-request-github",
+                "GitHub.copilot",
+                "ms-vscode.vscode-github-copilot-chat",
+                "ms-vscode.remote-containers",
+                "ms-nvidia.nsight-vscode-edition",
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-extension-pack",
+                "donjayamanne.githistory",
+                "eamodio.gitlens",
+                "GitHub.vscode-github-actions",
+                "ms-vscode.vscode-json",
+                "ms-python.isort",
+                "ms-python.black-formatter",
+                "ms-python.flake8",
+                "charliermarsh.ruff",
+                "redhat.vscode-yaml"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/bin/python3",
+                "r.rterm.linux": "/usr/bin/R",
+                "r.rpath.linux": "/usr/bin/R",
+                "r.lsp.enabled": true,
+                "r.alwaysUseActiveTerminal": true,
+                "python.formatting.provider": "black",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": false,
+                "python.linting.flake8Enabled": true,
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "git.enableSmartCommit": true,
+                "git.confirmSync": false,
+                "extensions.autoUpdate": true
+            }
+        }
+    },
+    "remoteUser": "root",
+    "workspaceFolder": "/workspaces/RR_project",
+    "containerEnv": {
+        "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+        }
 }
