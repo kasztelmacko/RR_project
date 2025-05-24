@@ -21,3 +21,8 @@ This project aims to reimplement the GPT-2 model 124M parameters model in R and 
 - WikiText-2 dataset: https://huggingface.co/datasets/mindchain/wikitext2
 - CoQA dataset: https://huggingface.co/datasets/stanfordnlp/coqa
 - Training Data smaller version of webtext https://www.kaggle.com/datasets/isamuisozaki/roughly-one-quarter-of-openwebtext
+
+## Error messege:
+cuda_is_available()
+[W524 18:34:28.488601101 CUDAFunctions.cpp:108] Warning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 500: named symbol not found (function operator())
+[1] FALSE
