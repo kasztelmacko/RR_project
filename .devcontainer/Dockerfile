@@ -10,10 +10,10 @@ ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
 # Set CUDA environment variables
-ENV CUDA_HOME=/usr/local/cuda-12.4
-ENV LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:${LD_LIBRARY_PATH}
-ENV PATH=/usr/local/cuda-12.4/bin:${PATH}
-ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.4
+ENV CUDA_HOME=/usr/local/cuda
+ENV LD_LIBRARY_PATH=/usr/local/cuda/targets/x86_64-linux/lib:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+ENV PATH=/usr/local/cuda/bin:${PATH}
+ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -38,6 +38,9 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     locales \
     && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/local/cuda/targets/x86_64-linux/lib /usr/local/cuda/lib64 && \
+    ldconfig
 
 # Configure locale
 RUN echo "C.UTF-8 UTF-8" >> /etc/locale.gen && \
