@@ -49,13 +49,10 @@ tryCatch({
  
   message("\n=== STEP 3: Installing R torch package with CUDA 12.4 support ===")
   Sys.setenv(CUDA="12.4")
-  Sys.setenv(CUDA_HOME = "/usr/local/cuda")
-  Sys.setenv(LD_LIBRARY_PATH = paste(Sys.getenv("LD_LIBRARY_PATH"), "/usr/local/cuda/lib64", sep=":"))
-  if (!requireNamespace("torch", quietly = TRUE)) {
-    install.packages("torch", repos = "https://cloud.r-project.org")
+  if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes")
   }
+  remotes::install_github("mlverse/torch")
   library(torch)
-  torch::install_torch(type="CUDA", version = "2.2.0", timeout = 2000, reinstall = TRUE)
-
 })
   
