@@ -66,7 +66,7 @@ GPT <- nn_module(
 
     # Create positions starting from 1 for R's 1-based indexing
     # torch_arange(1, Token+1) creates indices [1, 2, ..., Token]
-    pos <- torch_arange(1, Token + 1, dtype = torch_long(), device = idx$device)
+    pos <- torch_arange(1, Token, dtype = torch_long(), device = idx$device)
 
     pos_emb <- self$transformer[["wpe"]](pos)
     tok_emb <- self$transformer[["wte"]](idx)
