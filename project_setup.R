@@ -2,7 +2,7 @@ tryCatch({
   message("\n=== STEP 0: Installing required R packages ===")
   
   # Ensure VS Code R dependencies are installed
-  required_packages <- c("jsonlite", "rlang", "pacman", "reticulate", "R6", "remotes", "curl")
+  required_packages <- c("jsonlite", "rlang", "pacman", "reticulate", "R6", "remotes", "curl", "stringr", "torch")
   
   for (pkg in required_packages) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
@@ -49,10 +49,11 @@ tryCatch({
  
   message("\n=== STEP 3: Installing R torch package with CUDA 12.4 support ===")
   Sys.setenv(CUDA="12.4")
-  if (!requireNamespace("remotes", quietly = TRUE)) {
-    install.packages("remotes")
-  }
-  remotes::install_github("mlverse/torch")
+  torch::install_torch(type = "cpu")
   library(torch)
 })
   
+
+library(jsonlite)
+library(curl)
+library(stringr)
