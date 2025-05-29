@@ -1,7 +1,5 @@
 tryCatch({
   message("\n=== STEP 0: Installing required R packages ===")
-  
-  # Ensure VS Code R dependencies are installed
   required_packages <- c("jsonlite", "rlang", "pacman", "reticulate", "R6", "remotes", "curl", "stringr", "torch")
   
   for (pkg in required_packages) {
@@ -11,11 +9,6 @@ tryCatch({
     } else {
       message(pkg, " is already installed")
     }
-  }
- 
-  # Load pacman for easier package management
-  if (!requireNamespace("pacman", quietly = TRUE)) {
-    install.packages("pacman", repos = "https://cloud.r-project.org")
   }
  
   pacman::p_load(reticulate, R6)
@@ -47,13 +40,17 @@ tryCatch({
   message("NumPy version: ", np$`__version__`)
   message("Tiktoken loaded: ", !is.null(tiktoken))
  
-  message("\n=== STEP 3: Installing R torch package with CUDA 12.4 support ===")
-  Sys.setenv(CUDA="12.4")
+  message("\n=== STEP 3: Installing R torch package ===")
+  # Sys.setenv(CUDA="12.4")
+  # torch::install_torch(cuda_version = "12.4")
   torch::install_torch(type = "cpu")
   library(torch)
-})
-  
 
-library(jsonlite)
-library(curl)
-library(stringr)
+  message("\n=== STEP 4: Load additional R libraries ===")
+  suppressMessages({
+    library(jsonlite)
+    library(curl)
+    library(stringr)
+  })
+})
+
