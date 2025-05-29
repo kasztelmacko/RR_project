@@ -56,6 +56,6 @@ rsconnect/
 !.gitconfig-example
 
 weights/*
-!weights/
+!weights/.gitkeep
 
 data/hellaswag/*

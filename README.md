@@ -30,6 +30,7 @@ This project aims to reimplement the GPT-2 model 124M parameters model in R and 
 - WikiText-2 dataset: https://huggingface.co/datasets/mindchain/wikitext2
 - CoQA dataset: https://huggingface.co/datasets/stanfordnlp/coqa
 - Training Data smaller version of webtext https://www.kaggle.com/datasets/isamuisozaki/roughly-one-quarter-of-openwebtext
+- Hellaswag ledearboard benchmark: https://github.com/ggml-org/llama.cpp/discussions/2321
 
 ## Error messege:
 cuda_is_available()
