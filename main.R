@@ -28,7 +28,7 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
   # -----------------------------------------------------------------------------
   # Initialize tokenizer
   message("Initializing tokenizer...")
-  enc <- tiktoken$get_encoding("gpt2")
+  enc <<- tiktoken$get_encoding("gpt2")
 
   # -----------------------------------------------------------------------------
   # Load model weights
