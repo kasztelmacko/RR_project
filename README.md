@@ -36,3 +36,4 @@ This project aims to reimplement the GPT-2 model 124M parameters model in R and 
 cuda_is_available()
 [W524 18:34:28.488601101 CUDAFunctions.cpp:108] Warning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 500: named symbol not found (function operator())
 [1] FALSE
+Dockerfile with CUDA setup can be viewed in additional_files/CUDADockerfile, but in the end we can run it without GPU usage
