@@ -1,7 +1,7 @@
 # How to run (step by step)
 1. If you want to be able to work with github within container, create .env file by copying .example-env and fill required fields
 2. Download model weights, and place them in weights folder. URL: https://drive.google.com/file/d/1jnYn3kaVyoLcGEmDBCOFNPAslrs2tRo4/view
-3. build container, it downloads both R and python, git and CUDA
+3. build container, it downloads both R and python, and git. If you want to downlaod version with CUDA, swap Dockerfile content with CUDADockerfile
 4. run source("project_setup.R") in R console
 5. run source("main.R")
 6. run in R console run_main(prompt_text = `your prompt`) to run inference test
