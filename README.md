@@ -1,10 +1,19 @@
+# How to run (step by step)
+1. If you want to be able to work with github within container, create .env file by copying .example-env and fill required fields
+2. Download model weights, and place them in weights folder. URL: https://drive.google.com/file/d/1jnYn3kaVyoLcGEmDBCOFNPAslrs2tRo4/view
+3. build container, it downloads both R and python, git and CUDA
+4. run source("project_setup.R") in R console
+5. run source("main.R")
+6. run in R console run_main(prompt_text = `your prompt`) to run inference test
+7. run in R console run_main(mode = "hellaswag") to run hellaswag test
+
 # How to contribute:
 - the main training file follows the https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py rewriten in R + reticulate
 - to load the proper R libraries and python packages just run source("project_setup.R") which is on top of the model_train.R file
 - Current packages in use:
    - R6: most python like OOP in R
    - reticulate: packages that allows running python in R
-   - torch
+   - torch for R
    - numpy
    - tiktoken: OpenAI word tokenizer used in GPT2 training process
 
