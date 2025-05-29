@@ -28,5 +28,4 @@ generate_from_prompt <- function(model, prompt_text, max_length, config) {
   generated_tokens <- as.integer(xgen$to(device = "cpu")[1, ]) - 1L
   decoded_text <- enc$decode(as.list(generated_tokens))
   message(sprintf("Generated text: %s", decoded_text))
-  return(decoded_text)
 }
