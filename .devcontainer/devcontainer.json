@@ -8,7 +8,6 @@
         }
     },
     "runArgs": [
-        "--gpus", "all",
         "--shm-size=2g"
     ],
     "mounts": [
