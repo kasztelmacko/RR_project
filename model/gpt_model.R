@@ -1,25 +1,22 @@
-# -----------------------------------------------------------------------------
-# GPTConfig (Using an R list as started by the user)
-# Add dropout parameters to the config list
+#GPTConfig (Using an R list as started by the user)
 GPTConfig <- list(
-  block_size = 1024L, # max sequence length
-  vocab_size = 50257L, # for model training is 50304L according to Python comments
-  n_layer = 12L, # number of layers
-  n_head = 12L,  # number of heads
-  n_embd = 768L, # embedding dimension
-  attn_dropout = 0.0, # Example dropout values, adjust as needed
+  block_size = 1024L, #max sequence length
+  vocab_size = 50257L, #for model training is 50304L according to Python comments
+  n_layer = 12L, #number of layers
+  n_head = 12L,  #number of heads
+  n_embd = 768L, #embedding dimension
+  attn_dropout = 0.0, #example dropout values, can be adjusted if needed
   resid_dropout = 0.0
 )
 
-# -----------------------------------------------------------------------------
-# GPT Model (translation of Python's GPT class)
+#Model - translation of Python's GPT class
 GPT <- nn_module(
   "GPT",
   initialize = function(config) {
     super$initialize()
     self$config <- config
 
-    # Using nn_module_dict for the transformer components
+    #using nn_module_dict for the transformer components
     self$transformer <- nn_module_dict(list(
       wte = nn_embedding(config$vocab_size, config$n_embd),
       wpe = nn_embedding(config$block_size, config$n_embd),
@@ -28,14 +25,12 @@ GPT <- nn_module(
     ))
     self$lm_head <- nn_linear(config$n_embd, config$vocab_size, bias = FALSE)
 
-    # weight sharing scheme
-    # self$transformer[["wte"]]$weight <- self$lm_head$weight
+    #weight sharing scheme
+    #self$transformer[["wte"]]$weight <- self$lm_head$weight
 
-    # init params
     self$apply(self$.init_weights)
   },
 
-  # Helper function for weight initialization
   .init_weights = function(module) {
     if (inherits(module, "nn_linear")) {
       std <- 0.02
@@ -59,8 +54,7 @@ GPT <- nn_module(
                   Token, self$config$block_size))
     }
 
-    # Create positions starting from 1 for R's 1-based indexing
-    # torch_arange(1, Token+1) creates indices [1, 2, ..., Token]
+    #creating positions starting from 1 for R's 1-based indexing
     pos <- torch_arange(1, Token, dtype = torch_long(), device = idx$device)
 
     pos_emb <- self$transformer[["wpe"]](pos)
@@ -68,7 +62,7 @@ GPT <- nn_module(
 
     x <- tok_emb + pos_emb
 
-    # Alternative iteration method for transformer blocks
+    #Alternative iteration method for transformer blocks
     h_blocks <- self$transformer[["h"]]
     for (i in seq_along(h_blocks)) {
       x <- h_blocks[[i]](x)
@@ -123,47 +117,43 @@ GPT <- nn_module(
   }
 )
 
-# -----------------------------------------------------------------------------
-# Example Usage
+#Example Usage
 
-# Configuration for the training run
-# This combines model config with training hyperparameters
-# Update vocab_size for training as per Python comment
+#Configuration for the training run,combines model config with training hyperparameters
+#Update vocab_size for training as per Python comment
 train_config <- list(
-  vocab_size = 50257L, # number of tokens for training
-  block_size = 1024L, # max sequence length
-  n_layer = 12L, # number of layers
-  n_head = 12L,  # number of heads
-  n_embd = 768L, # embedding dimension
-  attn_dropout = 0.0, # Dropout values from Python training script
+  vocab_size = 50257L,
+  block_size = 1024L,
+  n_layer = 12L, 
+  n_head = 12L, 
+  n_embd = 768L,
+  attn_dropout = 0.0,
   resid_dropout = 0.0,
 
-  # Training hyperparameters from Python script
-  total_batch_size = 524288, # 2**19, ~0.5M, in number of tokens
-  Batch = 64, # micro batch size
-  Token = 1024, # sequence length
+  #training hyperparameters from Python script
+  total_batch_size = 524288, #2**19, ~0.5M, in number of tokens
+  Batch = 64, 
+  Token = 1024,
   max_lr = 6e-4,
   min_lr = 6e-4 * 0.1,
   warmup_steps = 715,
-  max_steps = 19073, # 19,073 steps is ~1 epoch, if data is 10B tokens and batch size 0.5M tokens
+  max_steps = 19073, #19,073 steps is ~1 epoch, if data is 10B tokens and batch size 0.5M tokens
   weight_decay = 0.1,
-  eval_interval = 250, # Evaluate every 250 steps
-  eval_iters = 20, # Number of batches for validation
-  log_interval = 10, # Log training loss every 10 steps
-  save_interval = 5000, # Save checkpoint every 5000 steps
+  eval_interval = 250, #Evaluate every 250 steps
+  eval_iters = 20, #Number of batches for validation
+  log_interval = 10, #Log training loss every 10 steps
+  save_interval = 5000, #Save checkpoint every 5000 steps
 
-  # Device and DDP setup (simplified for single GPU/CPU)
-  # This part would need significant adaptation for proper R DDP
+  #device and DDP setup (simplified for single GPU/CPU)
   device = if (cuda_is_available()) torch_device("cuda") else torch_device("cpu"),
   device_type = if (cuda_is_available()) "cuda" else "cpu",
-  ddp = FALSE, # Set to TRUE if running with R DDP (requires setup)
+  ddp = FALSE, #set to TRUE if running with R DDP (requires setup)
   ddp_rank = 0,
   ddp_local_rank = 0,
   ddp_world_size = 1,
-  master_process = TRUE # Assuming single process for now
+  master_process = TRUE #assuming single process for now
 )
 
-# Calculate gradient accumulation steps
 if (train_config$total_batch_size %% (train_config$Batch * train_config$Token * train_config$ddp_world_size) != 0) {
   stop("make sure total_batch_size is divisible by Batch * Token * ddp_world_size")
 }
@@ -174,7 +164,7 @@ if (train_config$master_process) {
 }
 
 
-# Learning rate schedule function
+#Learning rate schedule function
 get_lr <- function(it) {
     # 1) linear warmup for warmup_iters steps
     if (it < train_config$warmup_steps) {
