@@ -1,8 +1,9 @@
 run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,") {
+#Global flags (for caching within the session)
   if (!exists("SETUP_DONE")) SETUP_DONE <<- FALSE
   if (!exists("WEIGHTS_LOADED")) WEIGHTS_LOADED <<- FALSE
   if (!exists("MODEL_INITIALIZED")) MODEL_INITIALIZED <<- FALSE
-
+#Project settup
   if (!SETUP_DONE) {
     message("Running project setup...")
     source('project_setup.R')
@@ -45,7 +46,7 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
     loaded_config <- train_config
     message("Using default training configuration for the model.")
   }
-
+#Initialize model (only once per session)
   if (!MODEL_INITIALIZED) {
     message("Initializing model...")
     test_model <<- GPT(config = loaded_config)$to(device = loaded_config$device)
@@ -55,7 +56,7 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
   } else {
     message("Model already initialized — using cached instance.")
   }
-
+#Run specified test
   if (mode == "inference") {
     message("Running inference test...")
     source("eval/inference_test.R")
