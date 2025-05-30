@@ -1,12 +1,8 @@
 run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,") {
-  # -----------------------------------------------------------------------------
-  # Global flags (for caching within the session)
   if (!exists("SETUP_DONE")) SETUP_DONE <<- FALSE
   if (!exists("WEIGHTS_LOADED")) WEIGHTS_LOADED <<- FALSE
   if (!exists("MODEL_INITIALIZED")) MODEL_INITIALIZED <<- FALSE
 
-  # -----------------------------------------------------------------------------
-  # Project Setup (Install R packages, Python packages, download data)
   if (!SETUP_DONE) {
     message("Running project setup...")
     source('project_setup.R')
@@ -18,20 +14,14 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
     message("Project setup already done — using cached setup.")
   }
 
-  # -----------------------------------------------------------------------------
-  # Set random seeds
   torch_manual_seed(1337)
   if (cuda_is_available()) {
     torch_cuda_manual_seed(1337)
   }
 
-  # -----------------------------------------------------------------------------
-  # Initialize tokenizer
   message("Initializing tokenizer...")
   enc <<- tiktoken$get_encoding("gpt2")
 
-  # -----------------------------------------------------------------------------
-  # Load model weights
   weights_path <- "weights/Model-weights.pt"
   if (!WEIGHTS_LOADED) {
     if (!file.exists(weights_path)) {
@@ -45,8 +35,6 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
     message("Model weights already loaded — using cached weights.")
   }
 
-  # -----------------------------------------------------------------------------
-  # Load model config
   source('model/attention_classes.R')
   source('model/gpt_model.R')
   if (!is.null(original_weights$config)) {
@@ -58,8 +46,6 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
     message("Using default training configuration for the model.")
   }
 
-  # -----------------------------------------------------------------------------
-  # Initialize model (only once per session)
   if (!MODEL_INITIALIZED) {
     message("Initializing model...")
     test_model <<- GPT(config = loaded_config)$to(device = loaded_config$device)
@@ -70,8 +56,6 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
     message("Model already initialized — using cached instance.")
   }
 
-  # -----------------------------------------------------------------------------
-  # Run specified test
   if (mode == "inference") {
     message("Running inference test...")
     source("eval/inference_test.R")
