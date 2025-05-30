@@ -1,16 +1,12 @@
-# ---------------------------
-# 1. Define weight name mapping
-# ---------------------------
+#Definimg weight name mapping
 weight_mapping <- list(
   # Embeddings
   "wte.weight" = "transformer.wte.weight",
   "wpe.weight" = "transformer.wpe.weight",
   
-  # Final layer norm
   "ln_f.weight" = "transformer.ln_f.weight",
   "ln_f.bias" = "transformer.ln_f.bias",
   
-  # LM head
   "lm_head.weight" = "lm_head.weight"
 )
 
@@ -31,9 +27,7 @@ for (i in 0:11) {
   weight_mapping[[sprintf("FFN.%d.2.bias", i)]]   <- sprintf("transformer.h.%d.mlp.c_proj.bias", i)
 }
 
-# ---------------------------
-# 2. Process attention weights
-# ---------------------------
+#Processing attention weights
 process_attention_weights <- function(original_weights) {
   new_state_dict <- list()
   
@@ -70,12 +64,10 @@ process_attention_weights <- function(original_weights) {
   return(new_state_dict)
 }
 
-# ---------------------------
-# 3. Remap and Load Weights
-# ---------------------------
+#Remaping and loading weights
 remapped_state_dict <- process_attention_weights(original_weights)
 
-# Sanity check
+#Sanity check
 expected_params <- names(test_model$state_dict())
 missing <- setdiff(expected_params, names(remapped_state_dict))
 if (length(missing) > 0) {
@@ -84,19 +76,14 @@ if (length(missing) > 0) {
   message("All parameters accounted for in remapped state dict.")
 }
 
-# Load remapped weights
 test_model$load_state_dict(remapped_state_dict)
 
-# Verify blocks are accessible
 if (length(test_model$transformer[["h"]]) > 0) {
   message("First block accessible: TRUE")
 } else {
   warning("No transformer blocks found!")
 }
 
-# ---------------------------
-# 4. Link lm_head and wte AFTER loading
-# ---------------------------
 test_model$transformer[["wte"]]$weight <- test_model$lm_head$weight
 
 message("Model weights loaded and tied successfully.")
