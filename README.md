@@ -2,11 +2,10 @@
 1. If you want to be able to work with github within container, create .env file by copying .example-env and fill required fields
 2. Download model weights, and place them in weights folder. URL: https://drive.google.com/file/d/1jnYn3kaVyoLcGEmDBCOFNPAslrs2tRo4/view
 3. build container, it downloads both R and python, and git. If you want to downlaod version with CUDA, swap Dockerfile content with CUDADockerfile
-4. run `renv::restore()` in the R console to install all required packages specified in `renv.lock`.
-5. run source("project_setup.R") in R console
-6. run source("main.R")
-7. run in R console run_main(prompt_text = `your prompt`) to run inference test
-8. run in R console run_main(mode = "hellaswag") to run hellaswag test
+4. run source("project_setup.R") in R console
+5. run source("main.R")
+6. run in R console run_main(prompt_text = `your prompt`) to run inference test
+7. run in R console run_main(mode = "hellaswag") to run hellaswag test
 
 # How to contribute:
 - the main training file follows the https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py rewriten in R + reticulate

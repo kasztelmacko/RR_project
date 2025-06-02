@@ -1,15 +1,9 @@
 tryCatch({
   message("\n=== STEP 0: Installing required R packages ===")
-  required_packages <- c("jsonlite", "rlang", "pacman", "reticulate", "R6", "remotes", "curl", "stringr", "torch")
-  
-  for (pkg in required_packages) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      message("Installing ", pkg, "...")
-      install.packages(pkg, repos = "https://cloud.r-project.org")
-    } else {
-      message(pkg, " is already installed")
-    }
+  if (!requireNamespace("renv", quietly=TRUE)){
+    install.packages("renv")
   }
+  renv::restore()
  
   pacman::p_load(reticulate, R6)
  
