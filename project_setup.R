@@ -43,8 +43,8 @@ tryCatch({
   message("\n=== STEP 4: Load additional R libraries ===")
   suppressMessages({
     library(jsonlite)
-    library(curl)
     library(stringr)
+    library(curl)
   })
 })
 
