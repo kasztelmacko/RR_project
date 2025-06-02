@@ -64,7 +64,7 @@ run_main <- function(mode = "inference", prompt_text = "Default Prompt for you,"
   } else if (mode == "hellaswag") {
     message("Running Hellaswag evaluation...")
     source("eval/hellaswag_test.R")
-    hellaswag_test(test_model, enc, loaded_config)
+    hellaswag_test(test_model, enc, loaded_config, max_examples = 100)
   } else {
     stop(paste("Unknown mode:", mode, "\nAvailable modes: inference, hellaswag"))
   }
