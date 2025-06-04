@@ -5,8 +5,6 @@ tryCatch({
   }
   renv::restore()
  
-  pacman::p_load(reticulate, R6)
- 
   message("\n=== STEP 1: Setting up Python environment for reticulate ===")
   library(reticulate)
  
@@ -42,7 +40,7 @@ tryCatch({
 
   message("\n=== STEP 4: Load additional R libraries ===")
   suppressMessages({
-    library(jsonlite)
+    library(R6)
     library(stringr)
     library(curl)
   })
