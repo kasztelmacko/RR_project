@@ -42,7 +42,7 @@ hellaswag_test <- function(model, enc, config, max_examples = 10) {
   on.exit(close(con))
 
   while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0 && num_total < max_examples) {
-    example <- fromJSON(line)
+    example <- jsonlite::fromJSON(line)
     rendered <- render_example(example, enc)
 
     tokens <- rendered$tokens$to(device = config$device)
