@@ -1,3 +1,8 @@
+project was created by:
+- Maciej Kasztelanic
+- Joanna Jędrzejewska
+- Sergio Carcamo
+
 # How to run (step by step)
 1. If you want to be able to work with github within container, create .env file by copying .example-env and fill required fields
 2. Download model weights, and place them in weights folder. URL: https://drive.google.com/file/d/1jnYn3kaVyoLcGEmDBCOFNPAslrs2tRo4/view
